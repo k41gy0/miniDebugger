@@ -1,0 +1,26 @@
+#ifndef DEBUG_CORE_H
+#define DEBUG_CORE_H
+#include <sys/user.h>
+#include <sys/types.h>
+#include "breakpoint.h"
+
+#define MAX_BREAKPOINTS 64
+
+typedef struct Debugger {
+    pid_t pid;
+    Breakpoint bps[MAX_BREAKPOINTS];
+    int bp_count;
+} Debugger;
+
+int  dbg_launch(Debugger *dbg, char *prog, char **argv, char **envp);
+int  dbg_continue(Debugger *dbg);
+int  dbg_single(Debugger *dbg);
+int  dbg_wait(Debugger *dbg, int *status);
+void dbg_show_regs(pid_t pid);
+int  dbg_set_reg(pid_t pid, const char *r, unsigned long long v);
+int  dbg_read_mem(pid_t pid, unsigned long long addr, size_t len);
+int  dbg_write_mem(pid_t pid, unsigned long long addr, unsigned long long val);
+int  dbg_add_bp(Debugger *dbg, unsigned long long addr);
+int dbg_handle_break(Debugger *dbg, int *status);
+
+#endif /* DEBUG_CORE_H */
